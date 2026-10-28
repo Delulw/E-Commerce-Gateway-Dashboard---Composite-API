@@ -31,4 +31,22 @@ Desde la raíz del repositorio:
 mvn clean verify
 ```
 
-La implementación de endpoints, reglas de negocio y vistas se realizará en las siguientes etapas.
+## Microservicio de catálogo
+
+El catálogo expone `GET /microservices/products/{id}` en el puerto `8081`. En esta etapa utiliza datos de demostración en memoria, por lo que no requiere base de datos.
+
+Para iniciar solo este módulo desde la raíz:
+
+```shell
+mvn -pl catalog-service spring-boot:run
+```
+
+Producto de demostración:
+
+```shell
+curl http://localhost:8081/microservices/products/P-101
+```
+
+La respuesta contiene `id`, `name`, `description`, `category` y `priceUsd`. Un identificador inexistente produce `404 Not Found`.
+
+Los demás módulos y funcionalidades se implementarán en etapas posteriores.
