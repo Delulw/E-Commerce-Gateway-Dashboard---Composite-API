@@ -10,6 +10,18 @@ Proyecto académico para presentar información de producto mediante una API com
 
 Los módulos son independientes y se compilan desde el `pom.xml` raíz.
 
+## Integración de tipo de cambio
+
+El módulo `composite-api` incluye un cliente para consultar la tasa USD→MXN de Frankfurter (`https://api.frankfurter.app`). No requiere una API key. La URL del proveedor y la moneda destino se configuran en `composite-api/src/main/resources/application.yml`.
+
+La respuesta interna del cliente incluye la moneda base, la moneda destino, la tasa, la fecha de la tasa y el nombre de la fuente. Cuando se integre la API compuesta, usará esa tasa para calcular el precio en moneda local. La consulta real requiere conexión a internet; las pruebas automatizadas simulan las respuestas y no dependen del servicio externo.
+
+Para ejecutar las pruebas del módulo:
+
+```shell
+mvn -pl composite-api test
+```
+
 ## Microservicio de inventario
 
 El inventario expone `GET /microservices/inventory/{productId}` en el puerto `8082`. Utiliza datos de demostración en memoria, por lo que no requiere base de datos.
