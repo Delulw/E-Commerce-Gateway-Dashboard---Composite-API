@@ -14,7 +14,7 @@ Los módulos son independientes y se compilan desde el `pom.xml` raíz.
 
 El módulo `composite-api` incluye un cliente para consultar la tasa USD→MXN de Frankfurter (`https://api.frankfurter.app`). No requiere una API key. La URL del proveedor y la moneda destino se configuran en `composite-api/src/main/resources/application.yml`.
 
-La respuesta interna del cliente incluye la moneda base, la moneda destino, la tasa, la fecha de la tasa y el nombre de la fuente. Cuando se integre la API compuesta, usará esa tasa para calcular el precio en moneda local. La consulta real requiere conexión a internet; las pruebas automatizadas simulan las respuestas y no dependen del servicio externo.
+La respuesta interna del cliente incluye la moneda base, la moneda destino, la tasa, la fecha de la tasa y el nombre de la fuente. La API compuesta usa esa tasa para calcular el precio en moneda local. La consulta real requiere conexión a internet; las pruebas automatizadas simulan las respuestas y no dependen del servicio externo.
 
 Para ejecutar las pruebas del módulo:
 
@@ -129,3 +129,7 @@ Las pruebas del módulo compuesto se pueden ejecutar sin iniciar los servicios e
 ```shell
 mvn -pl composite-api test
 ```
+
+### Interfaz web
+
+Con los tres módulos ejecutándose, abre [http://localhost:8080/](http://localhost:8080/) en el navegador. La página consulta automáticamente el producto `P-101`; también puedes escribir otro identificador y seleccionar **Buscar producto**. La interfaz muestra el precio en USD y MXN, disponibilidad, almacén y entrega estimada, e informa si una dependencia falla.
