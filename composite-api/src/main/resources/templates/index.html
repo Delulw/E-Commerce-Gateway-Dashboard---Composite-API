@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#111827">
+    <title>Detalle de producto | E-Commerce</title>
+    <link rel="stylesheet" href="/css/app.css">
+    <script src="/js/app.js" defer></script>
+</head>
+<body>
+<header class="site-header">
+    <a class="brand" href="/" aria-label="E-Commerce, inicio">
+        <span class="brand-mark" aria-hidden="true">E</span>
+        <span>E-Commerce</span>
+    </a>
+    <span class="header-label">Detalle de producto</span>
+</header>
+
+<main class="page-shell">
+    <section class="intro">
+        <p class="eyebrow">PRODUCTO</p>
+        <h1>Encuentra lo que buscas</h1>
+        <p class="intro-copy">
+            Consulta en un solo lugar el producto, su disponibilidad y el precio actualizado en pesos.
+        </p>
+    </section>
+
+    <section class="search-panel" aria-labelledby="search-title">
+        <div>
+            <h2 id="search-title">Consultar producto</h2>
+            <p>Escribe el identificador del producto para ver su resumen.</p>
+        </div>
+        <form id="product-search-form" class="search-form">
+            <label class="visually-hidden" for="product-id">ID del producto</label>
+            <input id="product-id" name="productId" type="text" value="P-101"
+                   placeholder="Ej. P-101" autocomplete="off" required>
+            <button id="search-button" type="submit">
+                <span>Buscar producto</span>
+                <span aria-hidden="true">&rarr;</span>
+            </button>
+        </form>
+    </section>
+
+    <div id="request-message" class="request-message" role="status" aria-live="polite" hidden></div>
+
+    <section id="product-result" class="product-result" aria-live="polite" hidden>
+        <div class="product-heading">
+            <div>
+                <p id="product-category" class="eyebrow"></p>
+                <h2 id="product-title"></h2>
+                <p id="product-description" class="product-description"></p>
+            </div>
+            <span id="stock-badge" class="stock-badge"></span>
+        </div>
+
+        <div class="summary-grid">
+            <article class="summary-card price-card">
+                <p class="card-label">Precio</p>
+                <p id="price-mxn" class="price-primary"></p>
+                <p id="price-usd" class="price-secondary"></p>
+                <p id="currency-source" class="card-footnote"></p>
+            </article>
+            <article class="summary-card">
+                <p class="card-label">Disponibilidad</p>
+                <p id="available-units" class="card-value"></p>
+                <p class="card-footnote">unidades disponibles</p>
+            </article>
+            <article class="summary-card">
+                <p class="card-label">Almacén</p>
+                <p id="warehouse-location" class="card-value"></p>
+                <p class="card-footnote">ubicación del producto</p>
+            </article>
+            <article class="summary-card">
+                <p class="card-label">Entrega estimada</p>
+                <p id="delivery-days" class="card-value"></p>
+                <p class="card-footnote">días</p>
+            </article>
+        </div>
+
+        <p id="product-id-result" class="result-meta"></p>
+    </section>
+
+    <footer class="page-footer">
+        <span>Información consolidada por E-Commerce Composite API</span>
+        <span>Tipo de cambio sujeto a actualización</span>
+    </footer>
+</main>
+</body>
+</html>
