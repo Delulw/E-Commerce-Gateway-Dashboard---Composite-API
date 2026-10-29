@@ -10,6 +10,24 @@ Proyecto académico para presentar información de producto mediante una API com
 
 Los módulos son independientes y se compilan desde el `pom.xml` raíz.
 
+## Microservicio de inventario
+
+El inventario expone `GET /microservices/inventory/{productId}` en el puerto `8082`. Utiliza datos de demostración en memoria, por lo que no requiere base de datos.
+
+Para iniciar solo este módulo desde la raíz:
+
+```shell
+mvn -pl inventory-service spring-boot:run
+```
+
+Consulta del inventario de demostración:
+
+```shell
+curl http://localhost:8082/microservices/inventory/P-101
+```
+
+La respuesta contiene `productId`, `availableUnits`, `warehouseLocation` y `estimatedDeliveryDays`. Si el producto no tiene un registro de inventario, el servicio responde `404 Not Found`.
+
 ## Requisitos
 
 - Java 17 o superior
