@@ -10,3 +10,9 @@ server:
 exchange-rate:
   base-url: https://api.frankfurter.app
   target-currency: MXN
+
+services:
+  catalog:
+    base-url: http://localhost:8081
+  inventory:
+    base-url: http://localhost:8082
