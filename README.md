@@ -79,4 +79,53 @@ curl http://localhost:8081/microservices/products/P-101
 
 La respuesta contiene `id`, `name`, `description`, `category` y `priceUsd`. Un identificador inexistente produce `404 Not Found`.
 
-Los demás módulos y funcionalidades se implementarán en etapas posteriores.
+## API compuesta de resumen
+
+La API compuesta expone `GET /api/v1/products/{id}/summary` en el puerto `8080`. Consulta en paralelo el catálogo, inventario y tasa USD→MXN, y consolida la respuesta. Los servicios propios deben estar disponibles en `8081` y `8082`; sus URL base se configuran en `composite-api/src/main/resources/application.yml`. La consulta de tipo de cambio requiere internet.
+
+Para ejecutar y probar el flujo completo, abre una terminal por módulo desde la raíz del proyecto:
+
+```shell
+mvn -pl catalog-service spring-boot:run
+```
+
+```shell
+mvn -pl inventory-service spring-boot:run
+```
+
+```shell
+mvn -pl composite-api spring-boot:run
+```
+
+En Postman, crea una petición `GET` a:
+
+```text
+http://localhost:8080/api/v1/products/P-101/summary
+```
+
+No agregues un request body. Si las dependencias responden correctamente, la API devuelve `200 OK` con un JSON similar a este. La tasa y el precio en MXN cambian según la respuesta actual de Frankfurter:
+
+```json
+{
+  "product_id": "P-101",
+  "title": "Laptop Gamer XYZ",
+  "description": "Laptop para videojuegos y tareas de alto rendimiento.",
+  "category": "Electrónica",
+  "price_usd": 1200.00,
+  "price_mxn": 21660.00,
+  "stock_status": "IN_STOCK",
+  "available_units": 15,
+  "warehouse_location": "Almacén central - A-03",
+  "estimated_delivery_days": 2,
+  "currency_conversion_source": "Frankfurter External API",
+  "status": "SUCCESS"
+}
+```
+
+Si un servicio dependiente no encuentra el producto o inventario, el endpoint responde `404`. Si una dependencia no está disponible o devuelve un error, responde `502 Bad Gateway` con detalles en formato `ProblemDetail`.
+
+Las pruebas del módulo compuesto se pueden ejecutar sin iniciar los servicios externos:
+
+```shell
+mvn -pl composite-api test
+```
