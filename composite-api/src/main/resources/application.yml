@@ -6,3 +6,7 @@ spring:
 
 server:
   port: 8080
+
+exchange-rate:
+  base-url: https://api.frankfurter.app
+  target-currency: MXN
