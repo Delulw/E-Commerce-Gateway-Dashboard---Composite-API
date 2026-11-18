@@ -26,7 +26,23 @@
         </p>
     </section>
 
-    <section class="search-panel" aria-labelledby="search-title">
+    <section id="login-panel" class="search-panel" aria-labelledby="login-title">
+        <div>
+            <h2 id="login-title">Iniciar sesión</h2>
+            <p>Ingresa tus credenciales para consultar productos.</p>
+        </div>
+        <form id="login-form" class="search-form">
+            <label class="visually-hidden" for="username">Usuario</label>
+            <input id="username" name="username" type="text"
+                   placeholder="Usuario" autocomplete="username" required>
+            <label class="visually-hidden" for="password">Contraseña</label>
+            <input id="password" name="password" type="password"
+                   placeholder="Contraseña" autocomplete="current-password" required>
+            <button type="submit">Entrar</button>
+        </form>
+    </section>
+
+    <section id="search-panel" class="search-panel" aria-labelledby="search-title" hidden>
         <div>
             <h2 id="search-title">Consultar producto</h2>
             <p>Escribe el identificador del producto para ver su resumen.</p>
@@ -40,6 +56,7 @@
                 <span aria-hidden="true">&rarr;</span>
             </button>
         </form>
+        <button id="logout-button" type="button">Cerrar sesión</button>
     </section>
 
     <div id="request-message" class="request-message" role="status" aria-live="polite" hidden></div>
