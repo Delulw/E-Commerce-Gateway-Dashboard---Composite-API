@@ -5,8 +5,9 @@ import com.ecommerce.composite.service.ProductSummaryService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.client.HttpClientErrorException;
@@ -29,6 +30,7 @@ class ProductSummaryControllerTest {
     private ProductSummaryService productSummaryService;
 
     @Test
+    @WithMockUser
     void returnsConsolidatedSummaryAsSnakeCaseJson() throws Exception {
         when(productSummaryService.getProductSummary("P-101")).thenReturn(new ProductSummary(
                 "P-101",
@@ -63,6 +65,7 @@ class ProductSummaryControllerTest {
     }
 
     @Test
+    @WithMockUser
     void reportsNotFoundWhenDependencyDoesNotFindProduct() throws Exception {
         when(productSummaryService.getProductSummary("UNKNOWN"))
                 .thenThrow(HttpClientErrorException.create(
@@ -79,6 +82,7 @@ class ProductSummaryControllerTest {
     }
 
     @Test
+    @WithMockUser
     void reportsBadGatewayWhenDependencyCannotBeReached() throws Exception {
         when(productSummaryService.getProductSummary("P-101"))
                 .thenThrow(new ResourceAccessException("Connection refused"));

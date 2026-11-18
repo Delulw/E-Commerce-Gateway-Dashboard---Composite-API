@@ -53,6 +53,23 @@ La respuesta contiene `productId`, `availableUnits`, `warehouseLocation` y `esti
 
 La estructura inicial se mantiene en `develop`. Antes de comenzar una funcionalidad, actualizar su rama `feature/*` con `develop` para heredar los cambios integrados.
 
+## Autenticación de la API compuesta
+
+El módulo `composite-api` protege `GET /api/v1/products/{id}/summary` con JWT. Configura `AUTH_PASSWORD` y `AUTH_JWT_SECRET` como variables de entorno antes de iniciar la aplicación. La clave debe ser Base64 y contener al menos 32 bytes; el usuario predeterminado es `demo`. El JWT dura 15 minutos y el refresh token, guardado en una cookie `HttpOnly` y `SameSite=Strict`, se rota al renovarlo. Los refresh tokens se mantienen en memoria y se invalidan al reiniciar el servicio.
+
+Ejemplo para PowerShell:
+
+```powershell
+$env:AUTH_PASSWORD = "cambia-esta-contraseña"
+$secretBytes = New-Object byte[] 32
+$rng = [System.Security.Cryptography.RandomNumberGenerator]::Create()
+$rng.GetBytes($secretBytes)
+$env:AUTH_JWT_SECRET = [Convert]::ToBase64String($secretBytes)
+mvn -pl composite-api spring-boot:run
+```
+
+Inicia sesión con `POST /auth/login` y JSON `{"username":"demo","password":"..."}`. Envía el `accessToken` recibido como `Authorization: Bearer <token>` a las rutas protegidas. `POST /auth/refresh` rota la cookie y entrega un JWT nuevo; `POST /auth/logout` revoca la cookie actual. En producción, configura `AUTH_COOKIE_SECURE=true` y usa HTTPS.
+
 ## Compilación
 
 Desde la raíz del repositorio:
