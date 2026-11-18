@@ -20,6 +20,11 @@
     box-sizing: border-box;
 }
 
+#login-panel[hidden],
+#search-panel[hidden] {
+    display: none;
+}
+
 body {
     min-width: 320px;
     min-height: 100vh;
