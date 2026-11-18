@@ -1,8 +1,13 @@
 const form = document.querySelector("#product-search-form");
+const loginForm = document.querySelector("#login-form");
+const loginPanel = document.querySelector("#login-panel");
+const searchPanel = document.querySelector("#search-panel");
+const logoutButton = document.querySelector("#logout-button");
 const productIdInput = document.querySelector("#product-id");
 const searchButton = document.querySelector("#search-button");
 const requestMessage = document.querySelector("#request-message");
 const productResult = document.querySelector("#product-result");
+let accessToken;
 
 const fields = {
     category: document.querySelector("#product-category"),
@@ -53,6 +58,84 @@ function renderSummary(summary) {
     productResult.hidden = false;
 }
 
+async function renewAccessToken() {
+    const response = await fetch("/auth/refresh", { method: "POST" });
+    if (response.status === 401) {
+        accessToken = undefined;
+        return false;
+    }
+    if (!response.ok) {
+        throw new Error("No fue posible renovar la sesión.");
+    }
+    accessToken = (await response.json()).accessToken;
+    return true;
+}
+
+async function fetchSummary(url) {
+    const sendRequest = () => fetch(url, {
+        headers: {
+            Accept: "application/json",
+            Authorization: `Bearer ${accessToken}`
+        }
+    });
+    let response = await sendRequest();
+    if (response.status === 401 && await renewAccessToken()) {
+        response = await sendRequest();
+    }
+    return response;
+}
+
+function showLogin() {
+    loginPanel.hidden = false;
+    searchPanel.hidden = true;
+}
+
+function showSearch() {
+    loginPanel.hidden = true;
+    searchPanel.hidden = false;
+}
+
+loginForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const formData = new FormData(loginForm);
+    try {
+        const response = await fetch("/auth/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                username: formData.get("username"),
+                password: formData.get("password")
+            })
+        });
+        if (!response.ok) {
+            throw new Error(response.status === 401
+                ? "Usuario o contraseña incorrectos."
+                : "No fue posible iniciar sesión.");
+        }
+        accessToken = (await response.json()).accessToken;
+        loginForm.reset();
+        showSearch();
+        form.requestSubmit();
+    } catch (error) {
+        showMessage(error instanceof Error ? error.message : "No fue posible iniciar sesión.");
+    }
+});
+
+logoutButton.addEventListener("click", async () => {
+    try {
+        const response = await fetch("/auth/logout", { method: "POST" });
+        if (!response.ok) {
+            throw new Error("No fue posible cerrar la sesión en el servidor.");
+        }
+    } catch (error) {
+        showMessage(error instanceof Error ? error.message : "No fue posible cerrar sesión.");
+    } finally {
+        accessToken = undefined;
+        productResult.hidden = true;
+        showLogin();
+    }
+});
+
 form.addEventListener("submit", async (event) => {
     event.preventDefault();
 
@@ -68,14 +151,13 @@ form.addEventListener("submit", async (event) => {
     productResult.hidden = true;
 
     try {
-        const response = await fetch(
-            `/api/v1/products/${encodeURIComponent(productId)}/summary`,
-            {
-                headers: {
-                    Accept: "application/json"
-                }
-            }
+        const response = await fetchSummary(
+            `/api/v1/products/${encodeURIComponent(productId)}/summary`
         );
+        if (response.status === 401) {
+            showLogin();
+            throw new Error("La sesión expiró. Inicia sesión de nuevo.");
+        }
 
         if (!response.ok) {
             if (response.status === 404) {
@@ -98,4 +180,18 @@ form.addEventListener("submit", async (event) => {
     }
 });
 
-form.requestSubmit();
+(async () => {
+    try {
+        if (await renewAccessToken()) {
+            showSearch();
+            form.requestSubmit();
+        } else {
+            showLogin();
+        }
+    } catch (error) {
+        showLogin();
+        showMessage(error instanceof Error
+            ? error.message
+            : "No fue posible validar la sesión.");
+    }
+})();

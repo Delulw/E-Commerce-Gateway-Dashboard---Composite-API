@@ -7,6 +7,14 @@ spring:
 server:
   port: 8080
 
+auth:
+  username: ${AUTH_USERNAME:demo}
+  password: ${AUTH_PASSWORD}
+  jwt-secret: ${AUTH_JWT_SECRET}
+  access-token-ttl-seconds: ${AUTH_ACCESS_TOKEN_TTL_SECONDS:900}
+  refresh-token-ttl-seconds: ${AUTH_REFRESH_TOKEN_TTL_SECONDS:604800}
+  cookie-secure: ${AUTH_COOKIE_SECURE:false}
+
 exchange-rate:
   base-url: https://api.frankfurter.app
   target-currency: MXN
